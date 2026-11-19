@@ -10,4 +10,4 @@ shim='<script>window.__EMBEDDED_CATALOG__='+cat+''';const orig=window.fetch.bind
 s=re.sub(r'<script[^>]+src="[^"]*index-[^"]*\.js"[^>]*></script>',lambda m:shim+'<script type="module">'+js.replace('</script','<\\/script')+'</script>',s)
 css=next((d/'assets').glob('index-*.css')).read_text()
 s=re.sub(r'<link[^>]+href="[^"]*index-[^"]*\.css"[^>]*>',lambda m:'<style>'+css+'</style>',s)
-(root.parent/'DataGraph-Smart-App.html').write_text(s)
+(root/'DataGraph-Smart-App.html').write_text(s, encoding='utf-8')

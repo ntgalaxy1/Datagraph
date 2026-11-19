@@ -32,6 +32,9 @@ data/custom_overrides.json
 **/gemini-config.json
 **/gemini-quota.json
 
+# Generated single-file preview; published as a CI artifact, not source.
+/DataGraph-Smart-App.html
+
 # Local import/download scratch space (not application source).
 /.arena/
 /google_drive/

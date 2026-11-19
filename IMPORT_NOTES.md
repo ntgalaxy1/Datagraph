@@ -16,6 +16,8 @@ This was the newest full-source DataGraph archive found in the connected Drive. 
 - Ignore local download/import scratch space and runtime Gemini configuration/quota files, in addition to the archive's existing credential/build exclusions.
 - Run Android release signing only for version tags or explicit manual requests, so ordinary source pushes and pull requests do not require production signing keys. Signed releases still fail closed when signing credentials are missing.
 - Correct the obsolete default-password comment in `public/sync-catalog.php`; runtime authentication is unchanged and requires an operator-configured password/hash.
+- Keep the generated standalone HTML inside the repository root (ignored by Git) and update its documented/CI artifact path. The original parent-relative artifact path was rejected by GitHub Actions.
+- Use the Ubuntu 24.04 runner's preinstalled Android SDK (install required components only if missing) instead of the failing redundant SDK setup action, and update Java setup to the supported v5 action.
 
 Application behavior and the pinned dependency versions are otherwise preserved. In particular, SheetJS remains the upstream `0.20.3` tarball with the original lockfile integrity; it has not been downgraded to the older npm `xlsx` release.
 

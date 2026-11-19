@@ -36,7 +36,7 @@ npm run build
 python3 scripts/standalone.py
 ```
 
-`dist/` is the deployable website. The single-file preview is written to `../DataGraph-Smart-App.html`. Static previews/Pages do not run PHP backups, server password changes or shared writes. The historical demo password works only for file/localhost previews; it is **not a production credential**.
+`dist/` is the deployable website. The single-file preview is written to `DataGraph-Smart-App.html` in the repository root (ignored by Git). Static previews/Pages do not run PHP backups, server password changes or shared writes. The historical demo password works only for file/localhost previews; it is **not a production credential**.
 
 ### Optional Python preview
 
