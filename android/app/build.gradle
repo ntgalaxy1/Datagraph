@@ -1,0 +1,46 @@
+plugins { id 'com.android.application' }
+def signingReady = ['ANDROID_KEYSTORE_PATH', 'ANDROID_STORE_PASSWORD', 'ANDROID_KEY_ALIAS', 'ANDROID_KEY_PASSWORD'].every { System.getenv(it) }
+android {
+    namespace 'ir.datagraphlist.app'
+    buildFeatures { buildConfig true }
+    compileSdk 36
+    defaultConfig {
+        applicationId 'ir.datagraphlist.app'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+    signingConfigs {
+        if (signingReady) {
+            release {
+                storeFile file(System.getenv('ANDROID_KEYSTORE_PATH'))
+                storePassword System.getenv('ANDROID_STORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (signingReady) signingConfig signingConfigs.release
+        }
+        debug { applicationIdSuffix '.debug'; debuggable true }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    bundle { language { enableSplit = false } }
+}
+tasks.register('verifyReleaseSigning') {
+    doLast { if (!signingReady) throw new GradleException('Missing Android release signing secrets. Unsigned binaries are not production releases.') }
+}
+tasks.configureEach { task ->
+    if (task.name in ['assembleRelease', 'bundleRelease']) task.dependsOn('verifyReleaseSigning')
+}
+dependencies {
+    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.webkit:webkit:1.14.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+}

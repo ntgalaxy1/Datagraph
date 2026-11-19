@@ -1,0 +1,16 @@
+const vm=require('node:vm'),fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const store={SHEET_ID:'example-sheet-id-123456',SYNC_SECRET:'test-secret-012345678901234567890123456789'};
+let data=[],writes=0;
+const sheet={getLastRow:()=>data.length,setFrozenRows:()=>{},getRange:(row,col,height=1,width=1)=>({getValues:()=>Array.from({length:height},(_,r)=>Array.from({length:width},(_,c)=>data[row+r-1]?.[col+c-1]??'')),setValue:v=>{data[row-1]??=[];data[row-1][col-1]=v;},setValues:values=>{writes++;values.forEach((r,i)=>{data[row+i-1]??=[];r.forEach((v,j)=>data[row+i-1][col+j-1]=v);});}})};
+const context={console,PropertiesService:{getScriptProperties:()=>({getProperties:()=>({...store}),getProperty:k=>store[k],setProperty:(k,v)=>store[k]=v})},SpreadsheetApp:{openById:()=>({getSheetByName:()=>sheet,insertSheet:()=>sheet}),flush:()=>{}},LockService:{getScriptLock:()=>({waitLock:()=>{},releaseLock:()=>{}})},Utilities:{getUuid:()=>crypto.randomUUID(),DigestAlgorithm:{SHA_256:'sha256'},computeDigest:(_,s)=>Array.from(crypto.createHash('sha256').update(s).digest()).map(x=>x>127?x-256:x)},ContentService:{MimeType:{JSON:'json'},createTextOutput:text=>({setMimeType:()=>text})}};
+vm.createContext(context);vm.runInContext(fs.readFileSync('integrations/google-sheets/Code.gs','utf8'),context);
+const post=q=>JSON.parse(context.doPost({postData:{contents:JSON.stringify({token:store.SYNC_SECRET,sheet_id:store.SHEET_ID,...q})}}));
+assert.equal(post({action:'read',token:'wrong'}).success,false);
+const empty=post({action:'read'});assert.equal(empty.rows.length,0);
+const row={id:'p1',kind:'part',category_key:'cpu',name:'CPU model',specs:'LGA1700',price:100,initial_price:100,stock:2,brand:null};
+assert.deepEqual(post({action:'push',rows:[row],expected:empty.versions}).accepted,['p1']);
+const snap=post({action:'read'});assert.equal(snap.rows[0].price,100);
+data[1][5]=200;const conflict=post({action:'push',rows:[{...row,price:300}],expected:snap.versions});assert.deepEqual(conflict.conflicts,['p1']);assert.equal(data[1][5],200);
+const latest=post({action:'read'});assert.deepEqual(post({action:'push',rows:[{...row,price:300}],expected:latest.versions}).accepted,['p1']);assert.equal(data[1][5],300);
+const before=writes;const many=Array.from({length:500},(_,i)=>({...row,id:'new'+i,name:'CPU '+i}));assert.equal(post({action:'push',rows:many,expected:{}}).accepted.length,500);assert.equal(writes-before,1);
+console.log('PASS Apps Script mock: auth, standard headers, read/push, changed-Sheet conflict, batch writes (not a live Google account test)');

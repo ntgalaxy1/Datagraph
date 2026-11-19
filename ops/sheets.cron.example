@@ -1,0 +1,2 @@
+# cPanel -> Cron Jobs. Replace USER and actual PHP binary. No terminal is needed.
+*/5 * * * * DATAGRAPH_PRIVATE_DIR=/home/USER/datagraph-private /usr/local/bin/php /home/USER/public_html/sheets-cron.php >> /home/USER/datagraph-private/sheets-cron.log 2>&1
