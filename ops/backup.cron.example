@@ -1,0 +1,2 @@
+# cPanel Cron Jobs — replace USER and absolute paths. Once daily at 02:15 server time.
+15 2 * * * DATAGRAPH_PRIVATE_DIR=/home/USER/datagraph-private /usr/local/bin/php /home/USER/public_html/backup-cli.php >> /home/USER/datagraph-private/backup-cron.log 2>&1

@@ -1,0 +1,11 @@
+{
+  "applicationId": "ir.datagraphlist.app",
+  "nameFa": "سامانه هوشمند فاکتور فروشگاه دیتاگراف",
+  "nameEn": "Datagraphlist",
+  "versionName": "1.0.0",
+  "versionCode": 1,
+  "startUrl": "https://datagraphlist.ir/",
+  "compileSdk": 36,
+  "targetSdk": 36,
+  "minSdk": 26
+}

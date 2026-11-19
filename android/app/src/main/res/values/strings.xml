@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Datagraphlist</string>
+    <string name="app_name_fa" translatable="false">سامانه هوشمند فاکتور فروشگاه دیتاگراف</string>
+</resources>
